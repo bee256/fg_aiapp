@@ -1,13 +1,5 @@
 import streamlit as st
 
-from forms.contact import contact_form
-
-
-# @st.experimental_dialog("Contact Me")
-# def show_contact_form():
-#     contact_form()
-
-
 # --- HERO SECTION ---
 col1, col2 = st.columns(2, gap="small", vertical_alignment="center")
 with col1:
@@ -16,32 +8,25 @@ with col1:
 with col2:
     st.title("FG Software AG", anchor=False)
     st.write(
-        "We make software for fun, and to learn how to code. Everything is possible."
+        "Wir machen Software »just for fun«. Wir probieren aus, lernen zu programmieren und grundsätzlich gilt: alles ist möglich."
     )
-    # if st.button("✉️ Contact Me"):
-    #     show_contact_form()
-
 
 # --- EXPERIENCE & QUALIFICATIONS ---
 st.write("\n")
-st.subheader("How to join", anchor=False)
+st.subheader("Wie kann ich mitmachen?", anchor=False)
 st.write(
     """
-    - 7 Years experience extracting actionable insights from data
-    - Strong hands-on experience and knowledge in Python and Excel
-    - Good understanding of statistical principles and their respective applications
-    - Excellent team-player and displaying a strong sense of initiative on tasks
+    - Komm einfach Montags in den FG Rechnerraum zwischen 17:00 und 19:00 Uhr 
+    - Wenn du schon etwas programmieren kannst, ist es von Vorteil. Falls nicht, dann zeigen wir dir, wie du einsteigen kannst.
     """
 )
 
 # --- SKILLS ---
 st.write("\n")
-st.subheader("What do you need", anchor=False)
+st.subheader("Was muss ich mitbringen", anchor=False)
 st.write(
     """
-    - Programming: Python (Scikit-learn, Pandas), SQL, VBA
-    - Data Visualization: PowerBi, MS Excel, Plotly
-    - Modeling: Logistic regression, linear regression, decision trees
-    - Databases: Postgres, MongoDB, MySQL
+    - Spass am selber programmieren
+    - Etwas Durchhaltevermögen (es klappt nicht immer gleich) 😬
     """
 )

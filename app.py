@@ -1,4 +1,8 @@
 import streamlit as st
+import ollama
+import pandas as pd
+import humanize
+
 
 
 # --- PAGE SETUP ---
@@ -10,15 +14,24 @@ about_page = st.Page(
 )
 project_1_page = st.Page(
     "views/sales_dashboard.py",
-    title="Sales Dashboard",
+    title="Demo Dashboard",
     icon=":material/bar_chart:",
 )
-project_2_page = st.Page(
+chatbot_page = st.Page(
     "views/chatbot.py",
     title="Chat Bot",
     icon=":material/smart_toy:",
 )
-
+translator_page = st.Page(
+    "views/translator.py",
+    title="Übersetzer",
+    icon=":material/translate:",
+)
+settings_page = st.Page(
+    "views/settings.py",
+    title="Choose LLM",
+    icon=":material/smart_toy:",
+)
 
 # --- NAVIGATION SETUP [WITHOUT SECTIONS] ---
 # pg = st.navigation(pages=[about_page, project_1_page, project_2_page])
@@ -27,7 +40,8 @@ project_2_page = st.Page(
 pg = st.navigation(
     {
         "Info": [about_page],
-        "Projects": [project_1_page, project_2_page],
+        "Projects": [project_1_page, chatbot_page, translator_page],
+        "Settings": [settings_page]
     }
 )
 
