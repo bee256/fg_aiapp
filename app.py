@@ -1,9 +1,5 @@
 import streamlit as st
-import ollama
-import pandas as pd
-import humanize
-
-
+from settings import Settings
 
 # --- PAGE SETUP ---
 about_page = st.Page(
@@ -28,7 +24,7 @@ translator_page = st.Page(
     icon=":material/translate:",
 )
 settings_page = st.Page(
-    "views/settings.py",
+    "views/settings_view.py",
     title="Choose LLM",
     icon=":material/smart_toy:",
 )
@@ -50,6 +46,14 @@ pg = st.navigation(
 st.logo("assets/fg_logo_string.png", size="large")
 st.sidebar.markdown("Made with ❤️ by FG Software AG")
 
+# Setup settings which is a singleton, if not already stored in session state.
+if 'settings' in st.session_state:
+    settings = st.session_state['settings']
+else:
+    settings = Settings()
+
+if settings.selected_model is None:
+    st.warning("No ollama models found. Please setup ollama first.")
 
 # --- RUN NAVIGATION ---
 pg.run()
