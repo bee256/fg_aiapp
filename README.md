@@ -20,6 +20,10 @@ streamlit run app.py
 python -m streamlit run app.py    # Run configuration to start Streamlit from an IDE such as PyCharm
 ```
 
+See screenshot of PyCharm run configuration below.
+
+![PyCharm run configuration](assets/pycharm_run_config.png)
+
 ## Examples screenshot
 
 ![Settings](assets/screenshot.png)
