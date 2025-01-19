@@ -4,11 +4,7 @@ FG AI App is a simple app written in Python leveraging Ollama LLMs and Streamlit
 The intention of this app is to teach working with AI powered by locally installed LLMs (Large Language Models)
 and quickly build a web based UI using the Streamlit library.
 
-## Screenshot
-
 ## Installation
-
-### Prerequisites
 
 - Python 3.12 and later
 - Required libraries listed in `requirements.txt`
@@ -24,7 +20,7 @@ streamlit run app.py
 python -m streamlit run app.py    # Run configuration to start Streamlit from an IDE such as PyCharm
 ```
 
-## Example
+## Examples screenshot
 
 ![Settings](assets/screenshot.png)
 
@@ -35,4 +31,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Credits
 
-See the credits screen when running the game. 😎
+Thanks to Sven Bosau for providing this [YouTube tutorial](https://youtu.be/9n4Ch2Dgex0?si=YJf8ME0B-nr4gQpo) and the [source code](https://github.com/Sven-Bo/python-multipage-webapp) for a multi page Streamlist app.
