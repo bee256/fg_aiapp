@@ -1,4 +1,3 @@
-import streamlit as st
 import ollama
 
 class Settings:
@@ -16,8 +15,6 @@ class Settings:
 
         self._initialized = True
         self.selected_model = None
-        # write itself is settings to the session_state
-        st.session_state.settings = self
         self.models = ollama.list()['models']
         # Create a dict with the name of the model as key
         self.models_dict = { item['model']: item for item in self.models }
