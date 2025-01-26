@@ -15,7 +15,11 @@ class Settings:
 
         self._initialized = True
         self.selected_model = None
-        self.models = ollama.list()['models']
+        try:
+            self.models = ollama.list()['models']
+        except Exception as e:
+            print(f"Could not get list of Ollama models due to exception: {e}")
+            self.models = []    # initialize empty list and continue
         # Create a dict with the name of the model as key
         self.models_dict = { item['model']: item for item in self.models }
         self.models_list = list(self.models_dict.keys())

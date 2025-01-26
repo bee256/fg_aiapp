@@ -18,6 +18,11 @@ translator_page = st.Page(
     title="Translator",
     icon=":material/translate:",
 )
+text_optimizer_page = st.Page(
+    "views/text_optimizer.py",
+    title="Text optimizer",
+    icon=":material/verified:",
+)
 settings_page = st.Page(
     "views/settings_view.py",
     title="Choose LLM",
@@ -28,7 +33,7 @@ settings_page = st.Page(
 pg = st.navigation(
     {
         "Info": [about_us_page],
-        "Projects": [chatbot_page, translator_page],
+        "Projects": [chatbot_page, translator_page, text_optimizer_page],
         "Settings": [settings_page]
     }
 )

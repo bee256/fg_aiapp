@@ -7,7 +7,8 @@ def clear_messages():
 
 
 def response_generator():
-    ollama_response = ollama.chat(model=st.session_state.settings.get_model_name(), stream=True, messages=st.session_state.messages)
+    ollama_response = ollama.chat(model=st.session_state.settings.get_model_name(), stream=True,
+                                  messages=st.session_state.messages)
     for partial_resp in ollama_response:
         token = partial_resp["message"]["content"]
         st.session_state["full_message"] += token
