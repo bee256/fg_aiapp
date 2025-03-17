@@ -1,0 +1,157 @@
+---
+- name: Setup Ubuntu Machine for AI App
+  hosts: all
+  become: yes
+  vars:
+    new_user: "fgaiapp"  # Change this to the desired username
+    repo_url: "https://github.com/bee256/fg_aiapp.git"  # Change this to the actual repository URL
+    app_dir: "/opt/apps/fgaiapp"
+    venv_dir: "{{ app_dir }}/.venv"
+    ollama_models:
+      - qwen2.5-coder:3b
+      - deepseek-r1:1.5b
+      - gemma3:1b
+
+  tasks:
+    - name: Ensure the new user exists
+      ansible.builtin.user:
+        name: "{{ new_user }}"
+        shell: "/bin/bash"
+        create_home: yes
+
+    - name: Grant sudo access to new user without password
+      ansible.builtin.lineinfile:
+        path: "/etc/sudoers.d/{{ new_user }}"
+        line: "{{ new_user }} ALL=(ALL) NOPASSWD: ALL"
+        create: yes
+        mode: '0440'
+
+    - name: Ensure .ssh directory exists for new user
+      ansible.builtin.file:
+        path: "/home/{{ new_user }}/.ssh"
+        state: directory
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        mode: '0700'
+
+    - name: Copy authorized_keys from root to new user
+      ansible.builtin.copy:
+        src: "/root/.ssh/authorized_keys"
+        dest: "/home/{{ new_user }}/.ssh/authorized_keys"
+        remote_src: yes
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        mode: '0600'
+
+    - name: Ensure application directory exists
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        mode: '0755'
+
+    - name: Clone the Git repository as new user
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "main"
+        force: yes
+        accept_hostkey: yes
+        update: yes
+        clone: yes
+      become: yes
+      become_user: "{{ new_user }}"
+
+    - name: Update apt repository
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Python3 and venv package
+      ansible.builtin.apt:
+        name:
+          - python3-venv
+        state: present
+
+    - name: Create and activate virtual environment as new user
+      ansible.builtin.shell:
+        cmd: "python3 -m venv {{ venv_dir }}"
+        creates: "{{ venv_dir }}"
+      become: yes
+      become_user: "{{ new_user }}"
+
+    - name: Install requirements inside virtual environment as new user
+      ansible.builtin.pip:
+        requirements: "{{ app_dir }}/requirements.txt"
+        virtualenv: "{{ venv_dir }}"
+      become: yes
+      become_user: "{{ new_user }}"
+
+    - name: Install Ollama
+      ansible.builtin.shell:
+        cmd: "curl -fsSL https://ollama.com/install.sh | sh"
+        creates: "/usr/local/bin/ollama"
+
+    - name: Download Ollama models as new user
+      ansible.builtin.shell:
+        cmd: "ollama pull {{ item }}"
+      loop: "{{ ollama_models }}"
+      become: yes
+      become_user: "{{ new_user }}"
+
+    - name: Create application start script
+      ansible.builtin.copy:
+        dest: "{{ app_dir }}/start_app.sh"
+        content: |
+          #!/bin/bash
+          # Set variables
+          WORK_DIR="{{ app_dir }}"
+
+          # Activate virtual environment
+          source "{{ venv_dir }}/bin/activate"
+
+          # Navigate to the working directory
+          cd "$WORK_DIR" || exit
+
+          # Start the Python application (in foreground)
+          exec python3 -m streamlit run app.py
+        owner: "{{ new_user }}"
+        group: "{{ new_user }}"
+        mode: '0755'
+
+    - name: Create systemd service for the AI App
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/fgaiapp.service"
+        content: |
+          [Unit]
+          Description=FG AI App
+          After=network.target
+
+          [Service]
+          ExecStart={{ app_dir }}/start_app.sh
+          WorkingDirectory={{ app_dir }}
+          Restart=no
+          User={{ new_user }}
+          Group={{ new_user }}
+          StandardOutput=append:/var/log/fgaiapp.log
+          StandardError=append:/var/log/fgaiapp_error.log
+
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd to recognize new service
+      ansible.builtin.systemd:
+        daemon_reload: yes
+
+    - name: Enable systemd service to start on boot
+      ansible.builtin.systemd:
+        name: fgaiapp
+        enabled: yes
+
+    - name: Start the AI app service
+      ansible.builtin.systemd:
+        name: fgaiapp
+        state: started
